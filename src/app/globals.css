@@ -1,14 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #111827; /* Dark background Gray */
+  --foreground: #e5e7eb; /* Light Gray text */
+  --accent: #10b981;     /* Green accent */
+
+  --navbar-bg: 17, 24, 39; /* Dark navbar background (rgb) */
+  --navbar-text: #e5e7eb;  /* Dark mode text */
 }
 
-@media (prefers-color-scheme: dark) {
+[data-theme="light"] {
+  --background: #ffffff; 
+  --foreground: #111827;
+  --navbar-bg: 255, 255, 255; /* Light navbar background (rgb) */
+  --navbar-text: #111827;     /* Light mode text */
+}
+
+/* dark theme user preference */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 html,
 body {
