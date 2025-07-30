@@ -4,6 +4,9 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from "react";
 import { Bars3Icon, XMarkIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { navItems } from '@/config/navItems';
+import MobileMenu from './MobileMenu';
+import { getLinkClasses } from '@/utils/navHelpers';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
   // --- Path & Previous Path ---
@@ -53,20 +56,6 @@ export default function Navbar() {
   const blur = 2 + scrollFactor * 4;
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
-  const getLinkClasses = (href: string) =>
-    `relative text-lg font-semibold pb-1 tracking-wide
-    text-[var(--navbar-text)] hover:text-green-600
-    after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-green-800
-    after:w-0 hover:after:w-full after:transition-[width] after:duration-300
-    ${pathname === href ? "text-green-300 after:w-full" : ""}`;
-
-  const getMobileLinkClasses = (href: string) =>
-    `text-lg font-medium ${
-      pathname === href
-        ? "text-green-300"
-        : "text-[var(--navbar-text)] hover:text-green-400"
-    }`;
-
   return (
     <header
       style={{
@@ -88,7 +77,7 @@ export default function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className={getLinkClasses(link.href)}
+              className={getLinkClasses(link.href, pathname)}
             >
               {link.name}
             </Link>
@@ -104,17 +93,7 @@ export default function Navbar() {
             Book a Call
           </Link>
 
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded hover:bg-gray-700 transition"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? (
-              <SunIcon className="h-5 w-5 text-[var(--navbar-text)]" />
-            ) : (
-              <MoonIcon className="h-5 w-5 text-[var(--navbar-text)]" />
-            )}
-          </button>
+          <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
 
           {/* Mobile Menu Button */}
           <button
@@ -132,36 +111,7 @@ export default function Navbar() {
       </div>
       <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-b from-white/10 to-transparent pointer-events-none"></div>
 
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-55 bg-black/30 transition-opacity duration-300"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Mobile Dropdown */}
-      <div
-        className={`absolute top-full right-4 w-48 md:hidden border-8 border-gray-600 rounded-xl overflow-hidden shadow-lg transition-all duration-300 z-60 ${
-          isOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
-        }`}
-        style={{ pointerEvents: isOpen ? "auto" : "none" }}
-      >
-        <div className="flex flex-col p-2 space-y-6 bg-gray-700">
-          {navItems.map((link, index) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className={`${getMobileLinkClasses(link.href)} transition-all duration-300 px-4 py-3 rounded-lg`}
-              style={{
-                transitionDelay: isOpen ? `${index * 75}ms` : "0ms"
-              }}
-              onClick={() => setIsOpen(false)}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
-      </div>
+      <MobileMenu isOpen={isOpen} setIsOpen={setIsOpen} pathname={pathname} />
     </header>
   );
 }
