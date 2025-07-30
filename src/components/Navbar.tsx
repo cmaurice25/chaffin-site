@@ -70,14 +70,13 @@ export default function Navbar() {
   return (
     <header
       style={{
-        backgroundColor: `rgba(var(--navbar-bg), ${opacity})`,
-        backdropFilter: `blur(${blur}px)`
+        backgroundColor: `rgba(var(--navbar-bg), ${opacity})`
       }}
       className={`fixed top-0 left-0 w-full border-b border-white/10 z-50 transition-all duration-300 rounded-b-xl ${
         scrollFactor > 0.5 ? "shadow-[0_2px_10px_rgba(0,0,0,0.6)]" : "shadow-none"
       }`}
     >
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between py-6 px-4">
+      <div className="max-w-7xl mx-auto w-full flex items-center justify-between py-7 md:py-7 px-4">
         {/* Logo */}
         <div className="text-2xl font-bold text-green-400">
           LOGO
@@ -131,24 +130,37 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-b from-white/10 to-transparent pointer-events-none"></div>
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-55 bg-black/30 transition-opacity duration-300"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
 
       {/* Mobile Dropdown */}
       <div
-        className={`md:hidden bg-gray-800 flex flex-col space-y-4 py-4 px-6 rounded-b-xl transition-all duration-300 transform origin-top ${
-          isOpen ? "scale-y-100" : "scale-y-0"
+        className={`absolute top-full right-4 w-48 md:hidden border-8 border-gray-600 rounded-xl overflow-hidden shadow-lg transition-all duration-300 z-60 ${
+          isOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-5"
         }`}
-        style={{ pointerEvents: isOpen ? "auto" : "none", opacity: isOpen ? 1 : 0 }}
+        style={{ pointerEvents: isOpen ? "auto" : "none" }}
       >
-        {navItems.map((link) => (
-          <Link
-            key={link.name}
-            href={link.href}
-            className={getMobileLinkClasses(link.href)}
-            onClick={() => setIsOpen(false)}
-          >
-            {link.name}
-          </Link>
-        ))}
+        <div className="flex flex-col p-2 space-y-6 bg-gray-700">
+          {navItems.map((link, index) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`${getMobileLinkClasses(link.href)} transition-all duration-300 px-4 py-3 rounded-lg`}
+              style={{
+                transitionDelay: isOpen ? `${index * 75}ms` : "0ms"
+              }}
+              onClick={() => setIsOpen(false)}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
       </div>
     </header>
   );
