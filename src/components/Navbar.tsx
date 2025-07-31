@@ -2,18 +2,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from "react";
-import { Bars3Icon, XMarkIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { navItems } from '@/config/navItems';
 import MobileMenu from './MobileMenu';
 import { getLinkClasses } from '@/utils/navHelpers';
 import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
-  // --- Path & Previous Path ---
   const pathname = usePathname();
   const previousPath = useRef(pathname);
 
-  // --- State ---
   const [isOpen, setIsOpen] = useState(false);
   const [scrollFactor, setScrollFactor] = useState(0);
   const [theme, setTheme] = useState<"dark" | "light">(() => {
@@ -25,8 +23,6 @@ export default function Navbar() {
     return "dark";
   });
 
-  // --- Effects ---
-  // Scroll to top only when navigating to home
   useEffect(() => {
     const wasHome = previousPath.current === "/";
     previousPath.current = pathname;
@@ -35,13 +31,11 @@ export default function Navbar() {
     }
   }, [pathname]);
 
-  // Theme management
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Scroll factor for opacity/blur
   useEffect(() => {
     const handleScroll = () => {
       const maxScroll = 200;
@@ -51,28 +45,24 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // --- Helpers ---
   const opacity = 0.2 + scrollFactor * 0.8;
-  const blur = 2 + scrollFactor * 4;
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
     <header
-      style={{
-        backgroundColor: `rgba(var(--navbar-bg), ${opacity})`
-      }}
+      style={{ backgroundColor: `rgba(var(--navbar-bg), ${opacity})` }}
       className={`fixed top-0 left-0 w-full border-b border-white/10 z-50 transition-all duration-300 rounded-b-xl ${
         scrollFactor > 0.5 ? "shadow-[0_2px_10px_rgba(0,0,0,0.6)]" : "shadow-none"
       }`}
     >
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between py-7 md:py-7 px-4">
+      <div className="max-w-7xl mx-auto w-full flex justify-between items-center py-7 md:py-7 px-4 md:grid md:grid-cols-3">
         {/* Logo */}
         <div className="text-2xl font-bold text-green-400">
           LOGO
         </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex space-x-8">
+        {/* Center Nav */}
+        <nav className="hidden md:flex justify-center space-x-8 lg:space-x-16">
           {navItems.map((link) => (
             <Link
               key={link.name}
@@ -84,8 +74,8 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* CTA + Mobile Menu */}
-        <div className="flex items-center space-x-4">
+        {/* CTA + Theme Toggle + Mobile Menu */}
+        <div className="flex justify-end items-center space-x-4">
           <Link
             href="/contact"
             className="hidden md:inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-500 transition"
@@ -95,7 +85,6 @@ export default function Navbar() {
 
           <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden text-gray-300 hover:text-green-400"
             onClick={() => setIsOpen(!isOpen)}
@@ -109,8 +98,8 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-b from-white/10 to-transparent pointer-events-none"></div>
 
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-b from-white/10 to-transparent pointer-events-none"></div>
       <MobileMenu isOpen={isOpen} setIsOpen={setIsOpen} pathname={pathname} />
     </header>
   );

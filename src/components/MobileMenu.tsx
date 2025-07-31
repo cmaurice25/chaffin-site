@@ -25,7 +25,7 @@ export default function MobileMenu({ isOpen, setIsOpen, pathname }: MobileMenuPr
         }`}
         style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
       >
-        <div className="flex flex-col p-2 space-y-6 bg-gray-700 rounded-xl">
+        <div className="flex flex-col p-2 space-y-6 bg-[rgba(var(--navbar-bg),1)]">
           {navItems.map((link, index) => (
             <Link
               key={link.name}
